@@ -1,11 +1,13 @@
 /******************************************************************
  *
- *   YOUR NAME / SECTION NUMBER
+ *  Amol Sayala/Section 002
  *
  *   This java file contains the problem solutions for the methods selectionSort,
  *   mergeSortDivisibleByKFirst, asteroidsDestroyed, and numRescueCanoes methods.
  *
  ********************************************************************/
+
+
 
 import java.util.Arrays;
 
@@ -23,28 +25,40 @@ public class ProblemSolutions {
      * sort is performed.
      *
      * @param values        - int[] array to be sorted.
-     * @param ascending     - if true,method performs an ascending sort, else descending.
+     * @param     - if true,method performs an ascending sort, else descending.
      *                        There are two method signatures allowing this parameter
      *                        to not be passed and defaulting to 'true (or ascending sort).
      */
 
-    public  void selectionSort(int[] values) {
-        selectionSort(values, true);
+    public void selectionSort(int[] values) {
+        selectionSort(values, true); // Default to ascending order
     }
 
-    public static void selectionSort(int[] values, boolean ascending ) {
-
+    public static void selectionSort(int[] values, boolean ascending) {
         int n = values.length;
 
         for (int i = 0; i < n - 1; i++) {
+            // Find the index of the smallest/largest element based on the order
+            int selectedIndex = i;
 
-            // YOU CODE GOES HERE -- COMPLETE THE INNER LOOP OF THIS
-            // "SELECTION SORT" ALGORITHM.
-            // DO NOT FORGET TO ADD YOUR NAME / SECTION ABOVE
+            for (int j = i + 1; j < n; j++) {
+                if (ascending) {
+                    if (values[j] < values[selectedIndex]) {
+                        selectedIndex = j; // Update index of the smallest element
+                    }
+                } else {
+                    if (values[j] > values[selectedIndex]) {
+                        selectedIndex = j; // Update index of the largest element
+                    }
+                }
+            }
 
+            // Swap the found element with the element at index `i`
+            int temp = values[i];
+            values[i] = values[selectedIndex];
+            values[selectedIndex] = temp;
         }
-
-    } // End class selectionSort
+    }
 
 
     /**
@@ -92,17 +106,42 @@ public class ProblemSolutions {
 
     private void mergeDivisbleByKFirst(int arr[], int k, int left, int mid, int right)
     {
-        // YOUR CODE GOES HERE, THIS METHOD IS NO MORE THAN THE STANDARD MERGE PORTION
-        // OF A MERGESORT, EXCEPT THE NUMBERS DIVISIBLE BY K MUST GO FIRST WITHIN THE
-        // SEQUENCE PER THE DISCUSSION IN THE PROLOGUE ABOVE.
-        //
-        // NOTE: YOU CAN PROGRAM THIS WITH A SPACE COMPLEXITY OF O(1) OR O(N LOG N).
-        // AGAIN, THIS IS REFERRING TO SPACE COMPLEXITY. O(1) IS IN-PLACE, O(N LOG N)
-        // ALLOCATES AUXILIARY DATA STRUCTURES (TEMPORARY ARRAYS). IT WILL BE EASIER
-        // TO CODE WITH A SPACE COMPLEXITY OF O(N LOG N), WHICH IS FINE FOR PURPOSES
-        // OF THIS PROGRAMMING EXERCISES.
+        int[] temp = new int[right - left + 1];
+        int i = left;
+        int j = mid + 1;
+        int kOne = 0;
 
-        return;
+        // First, copy all numbers divisible by k to the temp array
+        while (i <= mid && arr[i] % k == 0) {
+            temp[kOne++] = arr[i++];
+        }
+        while (j <= right && arr[j] % k == 0) {
+            temp[kOne++] = arr[j++];
+        }
+
+        // merge the remaining elements, considering divisibility by k
+        while (i <= mid && j <= right) {
+            if (arr[i] % k == 0) {
+                temp[kOne++] = arr[i++];
+            } else if (arr[j] % k == 0) {
+                temp[kOne++] = arr[j++];
+            } else if (arr[i] < arr[j]) {
+                temp[kOne++] = arr[i++];
+            } else {
+                temp[kOne++] = arr[j++];
+            }
+        }
+
+        // Copy any remaining elements
+        while (i <= mid) {
+            temp[kOne++] = arr[i++];
+        }
+        while (j <= right) {
+            temp[kOne++] = arr[j++];
+        }
+
+        // Copy the merged array back to the original array
+        System.arraycopy(temp, 0, arr, left, temp.length);
 
     }
 
@@ -153,12 +192,24 @@ public class ProblemSolutions {
      */
 
     public static boolean asteroidsDestroyed(int mass, int[] asteroids) {
+        // Sort the asteroids in ascending order
+        Arrays.sort(asteroids);
 
-        // YOUR CODE GOES HERE, CONSIDER USING ARRAYS.SORT()
+        long currentMass = mass; // Use long to avoid overflow
 
-        return false;
+        // Iterate through the asteroids
+        for (int asteroid : asteroids) {
+            if (currentMass >= asteroid) {
+                currentMass += asteroid; // Absorb the asteroid
+            } else {
+                return false; // Planet is destroyed
+            }
+        }
 
+        // If all asteroids are destroyed
+        return true;
     }
+
 
 
     /**
@@ -191,12 +242,29 @@ public class ProblemSolutions {
      */
 
     public static int numRescueSleds(int[] people, int limit) {
+        // Sort the array in ascending order
+        Arrays.sort(people);
 
-        // YOUR CODE GOES HERE, CONSIDER USING ARRAYS.SORT
+        int left = 0;                // Pointer to the lightest person
+        int right = people.length - 1; // Pointer to the heaviest person
+        int sleds = 0;               // Count of sleds needed
 
-        return -1;
+        while (left <= right) {
+            if (people[left] + people[right] <= limit) {
+                // If the lightest and heaviest can share a sled, move both pointers
+                left++;
+                right--;
+            } else {
+                // Otherwise, the heaviest person gets a sled alone
+                right--;
+            }
+            // In either case, we need one sled
+            sleds++;
+        }
 
+        return sleds;
     }
+
 
 } // End Class ProblemSolutions
 
